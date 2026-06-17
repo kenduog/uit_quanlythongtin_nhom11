@@ -1,0 +1,43 @@
+@model Docgium
+@{
+    ViewData["Title"] = "Thêm độc giả";
+}
+
+<h2>Thêm độc giả</h2>
+<p class="text-muted">Mã độc giả được sinh tự động.</p>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label class="form-label">Họ tên</label>
+                <input asp-for="HoTen" class="form-control" />
+                <span asp-validation-for="HoTen" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ngày lập thẻ</label>
+                <input asp-for="NgayLapThe" type="date" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ngày hết hạn</label>
+                <input asp-for="NgayHetHan" type="date" class="form-control" />
+                <span asp-validation-for="NgayHetHan" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tổng nợ</label>
+                <input asp-for="TongNo" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Trạng thái</label>
+                <select asp-for="TrangThai" class="form-select">
+                    <option value="Bình thường">Bình thường</option>
+                    <option value="Bị khóa">Bị khóa</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Lưu</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

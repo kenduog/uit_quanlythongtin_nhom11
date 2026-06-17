@@ -1,0 +1,73 @@
+@model TraSachViewModel
+@{
+    ViewData["Title"] = "Trả sách";
+}
+
+<h2>Trả sách - Phiếu @Model.Phieu.MaPhieuMuon</h2>
+<dl class="row">
+    <dt class="col-sm-2">Độc giả</dt><dd class="col-sm-4">@Model.Phieu.MaDocGiaNavigation?.HoTen</dd>
+    <dt class="col-sm-2">Ngày mượn</dt><dd class="col-sm-4">@Model.Phieu.NgayMuon?.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-2">Hạn phải trả</dt><dd class="col-sm-10">@Model.Phieu.HanPhaiTra.ToString("dd/MM/yyyy")</dd>
+</dl>
+
+<form asp-action="TraSach" asp-route-id="@Model.Phieu.MaPhieuMuon" method="post">
+    <table class="table table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th style="width:60px;" class="text-center">Trả</th>
+                <th>Mã cuốn</th><th>Tên sách</th><th>Tình trạng</th><th>Hiện trạng khi trả</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.CacDong.Count; i++)
+            {
+                var dong = Model.CacDong[i];
+                <tr class="@(dong.DaTra ? "table-secondary" : "")">
+                    <td class="text-center">
+                        <input type="hidden" name="CacDong[@i].MaCuonSach" value="@dong.MaCuonSach" />
+                        @if (dong.DaTra)
+                        {
+                            <span class="badge bg-success">Đã trả</span>
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="CacDong[@i].ChonTra" value="true" class="form-check-input" />
+                        }
+                    </td>
+                    <td>@dong.MaCuonSach</td>
+                    <td>@dong.TenSach</td>
+                    <td>
+                        @if (dong.DaTra)
+                        {
+                            <span>Trả ngày @dong.NgayTraThucTe?.ToString("dd/MM/yyyy") — phạt @((dong.TienPhatHienTai ?? 0).ToString("N0"))đ</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Chưa trả</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!dong.DaTra)
+                        {
+                            <select name="CacDong[@i].HienTrangKhiTra" class="form-select form-select-sm">
+                                <option value="Bình thường">Bình thường</option>
+                                <option value="Mới">Mới</option>
+                                <option value="Cũ">Cũ</option>
+                                <option value="Rách bìa nhẹ">Rách bìa nhẹ</option>
+                                <option value="Rách nát">Rách nát (hỏng nặng)</option>
+                                <option value="Mất sách">Mất sách</option>
+                            </select>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="alert alert-info">
+        Tiền phạt được tính tự động = số ngày trễ × 5.000đ + phí hư hỏng/mất sách (nếu có).
+    </div>
+
+    <button type="submit" class="btn btn-primary">Xác nhận trả</button>
+    <a asp-action="Details" asp-route-id="@Model.Phieu.MaPhieuMuon" class="btn btn-secondary">Quay lại</a>
+</form>

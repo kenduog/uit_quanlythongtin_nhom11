@@ -1,0 +1,18 @@
+@model Docgium
+@{
+    ViewData["Title"] = "Xóa độc giả";
+}
+
+<h2 class="text-danger">Xác nhận xóa độc giả</h2>
+<div class="alert alert-warning">Bạn có chắc muốn xóa độc giả này?</div>
+<dl class="row">
+    <dt class="col-sm-3">Mã độc giả</dt><dd class="col-sm-9">@Model.MaDocGia</dd>
+    <dt class="col-sm-3">Họ tên</dt><dd class="col-sm-9">@Model.HoTen</dd>
+    <dt class="col-sm-3">Tổng nợ</dt><dd class="col-sm-9">@((Model.TongNo ?? 0).ToString("N0"))đ</dd>
+    <dt class="col-sm-3">Số phiếu mượn</dt><dd class="col-sm-9">@Model.Phieumuons.Count</dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.MaDocGia" method="post">
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

@@ -1,0 +1,77 @@
+@model PagedResult<Phieumuon>
+@{
+    ViewData["Title"] = "Phiếu mượn";
+    var tuKhoa = ViewBag.TuKhoa as string;
+    var trangThai = ViewBag.TrangThai as string;
+    var homNay = (DateOnly)ViewBag.HomNay;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Phiếu mượn</h2>
+    <a class="btn btn-success" asp-action="Create">+ Lập phiếu mượn</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control" placeholder="Tìm theo mã phiếu / độc giả" />
+    </div>
+    <div class="col-md-3">
+        <select name="trangThai" class="form-select">
+            <option value="">-- Tất cả --</option>
+            <option value="chuatra" selected="@(trangThai == "chuatra")">Còn cuốn chưa trả</option>
+            <option value="datra" selected="@(trangThai == "datra")">Đã trả hết</option>
+            <option value="quahan" selected="@(trangThai == "quahan")">Quá hạn</option>
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Lọc</button></div>
+    <div class="col-md-2"><a class="btn btn-outline-secondary w-100" asp-action="Index">Xóa lọc</a></div>
+</form>
+
+<table class="table table-striped table-hover align-middle">
+    <thead class="table-dark">
+        <tr><th>Mã phiếu</th><th>Độc giả</th><th>Ngày mượn</th><th>Hạn trả</th><th class="text-center">Trạng thái</th><th class="text-end">Thao tác</th></tr>
+    </thead>
+    <tbody>
+        @if (!Model.Items.Any())
+        {
+            <tr><td colspan="6" class="text-center text-muted py-3">Không có dữ liệu.</td></tr>
+        }
+        @foreach (var p in Model.Items)
+        {
+            var conChuaTra = p.ChitietPms.Any(ct => ct.NgayTraThucTe == null);
+            var quaHan = conChuaTra && p.HanPhaiTra < homNay;
+            <tr>
+                <td>@p.MaPhieuMuon</td>
+                <td>@p.MaDocGiaNavigation?.HoTen</td>
+                <td>@p.NgayMuon?.ToString("dd/MM/yyyy")</td>
+                <td>@p.HanPhaiTra.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">
+                    @if (quaHan)
+                    {
+                        <span class="badge bg-danger">Quá hạn</span>
+                    }
+                    else if (conChuaTra)
+                    {
+                        <span class="badge bg-warning text-dark">Đang mượn</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Đã trả hết</span>
+                    }
+                </td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@p.MaPhieuMuon">Xem</a>
+                    @if (conChuaTra)
+                    {
+                        <a class="btn btn-sm btn-outline-primary" asp-action="TraSach" asp-route-id="@p.MaPhieuMuon">Trả sách</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    ViewData["RouteValues"] = new Dictionary<string, string?> { ["tuKhoa"] = tuKhoa, ["trangThai"] = trangThai };
+}
+<partial name="_Pager" model="Model" />

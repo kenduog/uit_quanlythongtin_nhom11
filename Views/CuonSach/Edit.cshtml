@@ -1,0 +1,35 @@
+@model Cuonsach
+@{
+    ViewData["Title"] = "Sửa cuốn sách";
+    var dauSachList = ViewBag.DauSachList as Microsoft.AspNetCore.Mvc.Rendering.SelectList;
+}
+
+<h2>Sửa cuốn sách: @Model.MaCuonSach</h2>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" asp-route-id="@Model.MaCuonSach" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaCuonSach" />
+            <div class="mb-3">
+                <label class="form-label">Đầu sách</label>
+                <select asp-for="MaDauSach" class="form-select" asp-items="dauSachList"></select>
+                <span asp-validation-for="MaDauSach" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Trạng thái kho</label>
+                <select asp-for="TrangThaiKho" class="form-select">
+                    <option value="Còn trong kho">Còn trong kho</option>
+                    <option value="Đã cho mượn">Đã cho mượn</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hiện trạng sách</label>
+                <input asp-for="HienTrangSach" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

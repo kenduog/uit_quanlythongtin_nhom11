@@ -1,0 +1,36 @@
+@model Cuonsach
+@{
+    ViewData["Title"] = "Chi tiết cuốn sách";
+}
+
+<h2>Chi tiết cuốn sách</h2>
+<dl class="row">
+    <dt class="col-sm-3">Mã cuốn sách</dt><dd class="col-sm-9">@Model.MaCuonSach</dd>
+    <dt class="col-sm-3">Thuộc đầu sách</dt><dd class="col-sm-9">@Model.MaDauSach - @Model.MaDauSachNavigation?.TenSach</dd>
+    <dt class="col-sm-3">Trạng thái kho</dt><dd class="col-sm-9">@Model.TrangThaiKho</dd>
+    <dt class="col-sm-3">Hiện trạng</dt><dd class="col-sm-9">@Model.HienTrangSach</dd>
+</dl>
+
+<h5>Lịch sử mượn</h5>
+<table class="table table-sm table-bordered">
+    <thead class="table-light"><tr><th>Mã phiếu</th><th>Ngày mượn</th><th>Hạn trả</th><th>Ngày trả thực tế</th><th>Tiền phạt</th></tr></thead>
+    <tbody>
+        @if (!Model.ChitietPms.Any())
+        {
+            <tr><td colspan="5" class="text-center text-muted">Chưa có lịch sử mượn.</td></tr>
+        }
+        @foreach (var ct in Model.ChitietPms)
+        {
+            <tr>
+                <td>@ct.MaPhieuMuon</td>
+                <td>@ct.MaPhieuMuonNavigation?.NgayMuon?.ToString("dd/MM/yyyy")</td>
+                <td>@ct.MaPhieuMuonNavigation?.HanPhaiTra.ToString("dd/MM/yyyy")</td>
+                <td>@(ct.NgayTraThucTe?.ToString("dd/MM/yyyy") ?? "Chưa trả")</td>
+                <td>@((ct.TienPhat ?? 0).ToString("N0"))đ</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Edit" asp-route-id="@Model.MaCuonSach" class="btn btn-primary">Sửa</a>
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

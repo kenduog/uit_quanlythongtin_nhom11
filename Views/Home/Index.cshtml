@@ -1,0 +1,75 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<h2 class="mb-4">Tổng quan hệ thống</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card text-bg-primary h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.TongDauSach</div><div>Đầu sách</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-bg-info h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.TongCuonSach</div><div>Cuốn sách</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-bg-success h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.TongDocGia</div><div>Độc giả</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-bg-warning h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.SachDangMuon</div><div>Sách đang mượn</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-bg-danger h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.SachQuaHan</div><div>Cuốn quá hạn chưa trả</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-bg-secondary h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.DocGiaBiKhoa</div><div>Độc giả bị khóa</div>
+        </div></div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card text-bg-dark h-100"><div class="card-body">
+            <div class="fs-2 fw-bold">@Model.TongNo.ToString("N0")đ</div><div>Tổng tiền độc giả đang nợ</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header fw-bold">Phiếu mượn cần chú ý (chưa trả hết)</div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã phiếu</th><th>Độc giả</th><th>Hạn trả</th>
+                    <th class="text-center">Cuốn chưa trả</th><th class="text-center">Trễ (ngày)</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.PhieuCanChuY.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-3">Không có phiếu nào cần chú ý.</td></tr>
+                }
+                @foreach (var p in Model.PhieuCanChuY)
+                {
+                    <tr class="@(p.SoNgayTre > 0 ? "table-danger" : "")">
+                        <td>@p.MaPhieuMuon</td>
+                        <td>@p.HoTenDocGia</td>
+                        <td>@p.HanPhaiTra.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">@p.SoCuonChuaTra</td>
+                        <td class="text-center">@(p.SoNgayTre > 0 ? p.SoNgayTre.ToString() : "-")</td>
+                        <td><a class="btn btn-sm btn-outline-primary" asp-controller="PhieuMuon" asp-action="TraSach" asp-route-id="@p.MaPhieuMuon">Trả sách</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

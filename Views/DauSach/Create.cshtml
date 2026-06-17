@@ -1,0 +1,39 @@
+@model Dausach
+@{
+    ViewData["Title"] = "Thêm đầu sách";
+}
+
+<h2>Thêm đầu sách</h2>
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label class="form-label">Tên sách</label>
+                <input asp-for="TenSach" class="form-control" />
+                <span asp-validation-for="TenSach" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tác giả</label>
+                <input asp-for="TacGia" class="form-control" />
+                <span asp-validation-for="TacGia" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Thể loại</label>
+                <input asp-for="TheLoai" class="form-control" list="theLoaiList" />
+                <datalist id="theLoaiList">
+                    <option value="Giáo Trình"></option>
+                    <option value="Tham Khảo"></option>
+                    <option value="Văn Học"></option>
+                    <option value="Kỹ Năng Sống"></option>
+                    <option value="Công Nghệ"></option>
+                </datalist>
+                <span asp-validation-for="TheLoai" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success">Lưu</button>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

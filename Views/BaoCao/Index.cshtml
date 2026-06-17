@@ -1,0 +1,97 @@
+@model BaoCaoViewModel
+@{
+    ViewData["Title"] = "Báo cáo - Thống kê";
+}
+
+<h2 class="mb-4">Báo cáo - Thống kê</h2>
+
+<form method="get" class="row g-2 mb-4 align-items-end">
+    <div class="col-md-3">
+        <label class="form-label">Từ ngày</label>
+        <input type="date" name="tuNgay" value="@Model.TuNgay.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Đến ngày</label>
+        <input type="date" name="denNgay" value="@Model.DenNgay.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Lọc kỳ</button></div>
+    <div class="col-md-4">
+        <div class="alert alert-success mb-0 py-2">
+            Tổng tiền phạt trong kỳ: <strong>@Model.TongTienPhatTrongKy.ToString("N0")đ</strong>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-danger text-white fw-bold">Phiếu quá hạn chưa trả (@Model.PhieuQuaHan.Count)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Phiếu</th><th>Độc giả</th><th>Hạn trả</th><th class="text-center">Cuốn</th><th class="text-center">Trễ</th></tr></thead>
+                    <tbody>
+                        @if (!Model.PhieuQuaHan.Any()) { <tr><td colspan="5" class="text-center text-muted">Không có.</td></tr> }
+                        @foreach (var p in Model.PhieuQuaHan)
+                        {
+                            <tr><td>@p.MaPhieuMuon</td><td>@p.HoTenDocGia</td><td>@p.HanPhaiTra.ToString("dd/MM/yyyy")</td><td class="text-center">@p.SoCuonChuaTra</td><td class="text-center">@p.SoNgayTre</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning fw-bold">Độc giả còn nợ (@Model.DocGiaCoNo.Count)</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Mã</th><th>Họ tên</th><th class="text-end">Tổng nợ</th><th>Trạng thái</th></tr></thead>
+                    <tbody>
+                        @if (!Model.DocGiaCoNo.Any()) { <tr><td colspan="4" class="text-center text-muted">Không có.</td></tr> }
+                        @foreach (var d in Model.DocGiaCoNo)
+                        {
+                            <tr><td>@d.MaDocGia</td><td>@d.HoTen</td><td class="text-end">@d.TongNo.ToString("N0")đ</td><td>@d.TrangThai</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white fw-bold">Sách đang được mượn (@Model.SachDangMuon.Count)</div>
+            <div class="card-body p-0" style="max-height:360px; overflow:auto;">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Cuốn</th><th>Tên sách</th><th>Độc giả</th><th>Hạn trả</th></tr></thead>
+                    <tbody>
+                        @if (!Model.SachDangMuon.Any()) { <tr><td colspan="4" class="text-center text-muted">Không có.</td></tr> }
+                        @foreach (var s in Model.SachDangMuon)
+                        {
+                            <tr><td>@s.MaCuonSach</td><td>@s.TenSach</td><td>@s.HoTenDocGia</td><td>@s.HanPhaiTra.ToString("dd/MM/yyyy")</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white fw-bold">Top sách được mượn nhiều</div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Tên sách</th><th>Tác giả</th><th class="text-center">Lượt mượn</th></tr></thead>
+                    <tbody>
+                        @if (!Model.SachMuonNhieu.Any()) { <tr><td colspan="3" class="text-center text-muted">Không có.</td></tr> }
+                        @foreach (var s in Model.SachMuonNhieu)
+                        {
+                            <tr><td>@s.TenSach</td><td>@s.TacGia</td><td class="text-center">@s.SoLuotMuon</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

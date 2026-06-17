@@ -1,0 +1,17 @@
+@model Cuonsach
+@{
+    ViewData["Title"] = "Xóa cuốn sách";
+}
+
+<h2 class="text-danger">Xác nhận xóa cuốn sách</h2>
+<div class="alert alert-warning">Bạn có chắc muốn xóa cuốn sách này?</div>
+<dl class="row">
+    <dt class="col-sm-3">Mã cuốn sách</dt><dd class="col-sm-9">@Model.MaCuonSach</dd>
+    <dt class="col-sm-3">Đầu sách</dt><dd class="col-sm-9">@Model.MaDauSachNavigation?.TenSach</dd>
+    <dt class="col-sm-3">Trạng thái kho</dt><dd class="col-sm-9">@Model.TrangThaiKho</dd>
+</dl>
+
+<form asp-action="Delete" asp-route-id="@Model.MaCuonSach" method="post">
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

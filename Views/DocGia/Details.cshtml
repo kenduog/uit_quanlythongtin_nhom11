@@ -1,0 +1,41 @@
+@model Docgium
+@{
+    ViewData["Title"] = "Chi tiết độc giả";
+    var homNay = (DateOnly)ViewBag.HomNay;
+}
+
+<h2>Chi tiết độc giả</h2>
+<dl class="row">
+    <dt class="col-sm-3">Mã độc giả</dt><dd class="col-sm-9">@Model.MaDocGia</dd>
+    <dt class="col-sm-3">Họ tên</dt><dd class="col-sm-9">@Model.HoTen</dd>
+    <dt class="col-sm-3">Ngày lập thẻ</dt><dd class="col-sm-9">@Model.NgayLapThe?.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-3">Ngày hết hạn</dt>
+    <dd class="col-sm-9 @(Model.NgayHetHan < homNay ? "text-danger fw-bold" : "")">
+        @Model.NgayHetHan.ToString("dd/MM/yyyy") @(Model.NgayHetHan < homNay ? "(Đã hết hạn)" : "")
+    </dd>
+    <dt class="col-sm-3">Tổng nợ</dt><dd class="col-sm-9">@((Model.TongNo ?? 0).ToString("N0"))đ</dd>
+    <dt class="col-sm-3">Trạng thái</dt><dd class="col-sm-9">@Model.TrangThai</dd>
+</dl>
+
+<h5>Lịch sử phiếu mượn</h5>
+<table class="table table-sm table-bordered">
+    <thead class="table-light"><tr><th>Mã phiếu</th><th>Ngày mượn</th><th>Hạn trả</th><th class="text-center">Số cuốn</th></tr></thead>
+    <tbody>
+        @if (!Model.Phieumuons.Any())
+        {
+            <tr><td colspan="4" class="text-center text-muted">Chưa có phiếu mượn.</td></tr>
+        }
+        @foreach (var p in Model.Phieumuons.OrderByDescending(x => x.NgayMuon))
+        {
+            <tr>
+                <td><a asp-controller="PhieuMuon" asp-action="Details" asp-route-id="@p.MaPhieuMuon">@p.MaPhieuMuon</a></td>
+                <td>@p.NgayMuon?.ToString("dd/MM/yyyy")</td>
+                <td>@p.HanPhaiTra.ToString("dd/MM/yyyy")</td>
+                <td class="text-center">@p.ChitietPms.Count</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Edit" asp-route-id="@Model.MaDocGia" class="btn btn-primary">Sửa</a>
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

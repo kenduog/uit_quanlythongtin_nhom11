@@ -1,0 +1,31 @@
+@model Dausach
+@{
+    ViewData["Title"] = "Chi tiết đầu sách";
+}
+
+<h2>Chi tiết đầu sách</h2>
+<dl class="row">
+    <dt class="col-sm-3">Mã đầu sách</dt><dd class="col-sm-9">@Model.MaDauSach</dd>
+    <dt class="col-sm-3">Tên sách</dt><dd class="col-sm-9">@Model.TenSach</dd>
+    <dt class="col-sm-3">Tác giả</dt><dd class="col-sm-9">@Model.TacGia</dd>
+    <dt class="col-sm-3">Thể loại</dt><dd class="col-sm-9">@Model.TheLoai</dd>
+    <dt class="col-sm-3">Số cuốn</dt><dd class="col-sm-9">@Model.Cuonsaches.Count</dd>
+</dl>
+
+<h5>Các cuốn sách thuộc đầu sách này</h5>
+<table class="table table-sm table-bordered">
+    <thead class="table-light"><tr><th>Mã cuốn</th><th>Trạng thái kho</th><th>Hiện trạng</th></tr></thead>
+    <tbody>
+        @foreach (var c in Model.Cuonsaches)
+        {
+            <tr>
+                <td>@c.MaCuonSach</td>
+                <td>@c.TrangThaiKho</td>
+                <td>@c.HienTrangSach</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Edit" asp-route-id="@Model.MaDauSach" class="btn btn-primary">Sửa</a>
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

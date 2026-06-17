@@ -1,0 +1,32 @@
+@model dynamic
+@{
+    // Model: PagedResult<T>; ViewData["RouteValues"] optional dictionary of extra query params.
+    int totalPages = Model.TotalPages;
+    int current = Model.PageNumber;
+    var extra = ViewData["RouteValues"] as Dictionary<string, string?> ?? new Dictionary<string, string?>();
+    Func<int, Dictionary<string, string?>> rv = p =>
+    {
+        var d = new Dictionary<string, string?>(extra) { ["page"] = p.ToString() };
+        return d;
+    };
+}
+@if (totalPages > 1)
+{
+    <nav>
+        <ul class="pagination pagination-sm">
+            <li class="page-item @(Model.HasPrevious ? "" : "disabled")">
+                <a class="page-link" asp-all-route-data="@rv(current - 1)">«</a>
+            </li>
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == current ? "active" : "")">
+                    <a class="page-link" asp-all-route-data="@rv(i)">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.HasNext ? "" : "disabled")">
+                <a class="page-link" asp-all-route-data="@rv(current + 1)">»</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-muted small">Tổng @Model.TotalItems mục — trang @current / @totalPages</div>
+}

@@ -1,0 +1,46 @@
+@model Phieumuon
+@{
+    ViewData["Title"] = "Chi tiết phiếu mượn";
+    var homNay = (DateOnly)ViewBag.HomNay;
+    var conChuaTra = Model.ChitietPms.Any(ct => ct.NgayTraThucTe == null);
+}
+
+<h2>Chi tiết phiếu mượn @Model.MaPhieuMuon</h2>
+<dl class="row">
+    <dt class="col-sm-2">Độc giả</dt><dd class="col-sm-4">@Model.MaDocGiaNavigation?.HoTen (@Model.MaDocGia)</dd>
+    <dt class="col-sm-2">Ngày mượn</dt><dd class="col-sm-4">@Model.NgayMuon?.ToString("dd/MM/yyyy")</dd>
+    <dt class="col-sm-2">Hạn phải trả</dt>
+    <dd class="col-sm-10 @(conChuaTra && Model.HanPhaiTra < homNay ? "text-danger fw-bold" : "")">
+        @Model.HanPhaiTra.ToString("dd/MM/yyyy")
+    </dd>
+</dl>
+
+<table class="table table-bordered align-middle">
+    <thead class="table-dark">
+        <tr><th>Mã cuốn</th><th>Tên sách</th><th>Ngày trả</th><th>Hiện trạng khi trả</th><th class="text-end">Tiền phạt</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var ct in Model.ChitietPms)
+        {
+            <tr>
+                <td>@ct.MaCuonSach</td>
+                <td>@ct.MaCuonSachNavigation?.MaDauSachNavigation?.TenSach</td>
+                <td>@(ct.NgayTraThucTe?.ToString("dd/MM/yyyy") ?? "Chưa trả")</td>
+                <td>@ct.HienTrangKhiTra</td>
+                <td class="text-end">@((ct.TienPhat ?? 0).ToString("N0"))đ</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr class="table-light fw-bold">
+            <td colspan="4" class="text-end">Tổng tiền phạt phiếu</td>
+            <td class="text-end">@(Model.ChitietPms.Sum(ct => ct.TienPhat ?? 0).ToString("N0"))đ</td>
+        </tr>
+    </tfoot>
+</table>
+
+@if (conChuaTra)
+{
+    <a asp-action="TraSach" asp-route-id="@Model.MaPhieuMuon" class="btn btn-primary">Trả sách</a>
+}
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

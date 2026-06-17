@@ -1,0 +1,59 @@
+@model List<KetQuaTraCuuSach>
+@{
+    ViewData["Title"] = "Tra cứu sách";
+    var tuKhoa = ViewBag.TuKhoa as string;
+    var chiConTrongKho = (bool)(ViewBag.ChiConTrongKho ?? false);
+}
+
+<h2>Tra cứu sách</h2>
+
+<form method="get" class="row g-2 mb-3 align-items-center">
+    <div class="col-md-6">
+        <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control" placeholder="Nhập tên sách / tác giả / thể loại" />
+    </div>
+    <div class="col-md-3 form-check ms-2">
+        <input type="checkbox" name="chiConTrongKho" value="true" class="form-check-input" id="cb" @(chiConTrongKho ? "checked" : "") />
+        <label class="form-check-label" for="cb">Chỉ hiện sách còn trong kho</label>
+    </div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Tra cứu</button></div>
+</form>
+
+@if (!string.IsNullOrWhiteSpace(tuKhoa))
+{
+    <p class="text-muted">Tìm thấy <strong>@Model.Count</strong> kết quả cho "@tuKhoa".</p>
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr><th>Mã cuốn</th><th>Tên sách</th><th>Tác giả</th><th>Thể loại</th><th>Trạng thái kho</th><th>Hiện trạng</th></tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="6" class="text-center text-muted py-3">Không tìm thấy kết quả.</td></tr>
+            }
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.MaCuonSach</td>
+                    <td>@r.TenSach</td>
+                    <td>@r.TacGia</td>
+                    <td>@r.TheLoai</td>
+                    <td>
+                        @if (r.TrangThaiKho == "Còn trong kho")
+                        {
+                            <span class="badge bg-success">Còn trong kho</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Đã cho mượn</span>
+                        }
+                    </td>
+                    <td>@r.HienTrangSach</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-secondary">Nhập từ khóa để bắt đầu tra cứu.</div>
+}

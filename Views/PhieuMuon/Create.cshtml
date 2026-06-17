@@ -1,0 +1,60 @@
+@model LapPhieuMuonViewModel
+@{
+    ViewData["Title"] = "Lập phiếu mượn";
+}
+
+<h2>Lập phiếu mượn</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" class="alert alert-danger" style="@(ViewData.ModelState.IsValid ? "display:none" : "")"></div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Độc giả</label>
+            <select asp-for="MaDocGia" class="form-select" asp-items="Model.DocGiaList">
+                <option value="">-- Chọn độc giả (đủ điều kiện mượn) --</option>
+            </select>
+            <span asp-validation-for="MaDocGia" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Hạn phải trả</label>
+            <input asp-for="HanPhaiTra" type="date" class="form-control" />
+            <span asp-validation-for="HanPhaiTra" class="text-danger"></span>
+        </div>
+    </div>
+
+    <h5>Chọn cuốn sách còn trong kho</h5>
+    <div class="table-responsive" style="max-height:420px; overflow:auto;">
+        <table class="table table-sm table-hover align-middle">
+            <thead class="table-light sticky-top">
+                <tr>
+                    <th style="width:50px;" class="text-center">Chọn</th>
+                    <th>Mã cuốn</th><th>Tên sách</th><th>Tác giả</th><th>Hiện trạng</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.CuonSachConTrongKho.Any())
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-3">Không còn cuốn sách nào trong kho.</td></tr>
+                }
+                @foreach (var c in Model.CuonSachConTrongKho)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" name="DsMaCuonSach" value="@c.MaCuonSach" class="form-check-input" />
+                        </td>
+                        <td>@c.MaCuonSach</td>
+                        <td>@c.TenSach</td>
+                        <td>@c.TacGia</td>
+                        <td>@c.HienTrangSach</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Lập phiếu</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Quay lại</a>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
