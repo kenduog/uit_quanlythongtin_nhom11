@@ -72,6 +72,8 @@ public class CuonSachController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Cuonsach model)
     {
+        ModelState.Remove(nameof(model.MaCuonSach));          // Khóa sinh tự động.
+        ModelState.Remove(nameof(model.MaDauSachNavigation)); // Navigation không bind từ form.
         if (!ModelState.IsValid)
         {
             await NapDropdownAsync(model.MaDauSach);
@@ -99,6 +101,7 @@ public class CuonSachController : Controller
     public async Task<IActionResult> Edit(string id, Cuonsach model)
     {
         if (id != model.MaCuonSach) return NotFound();
+        ModelState.Remove(nameof(model.MaDauSachNavigation)); // Navigation không bind từ form.
         if (!ModelState.IsValid)
         {
             await NapDropdownAsync(model.MaDauSach);

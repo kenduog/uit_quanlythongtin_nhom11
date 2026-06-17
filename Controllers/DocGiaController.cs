@@ -73,6 +73,7 @@ public class DocGiaController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Docgium model)
     {
+        ModelState.Remove(nameof(model.MaDocGia)); // Khóa sinh tự động, không có trong form.
         if (model.NgayHetHan <= (model.NgayLapThe ?? DateOnly.FromDateTime(DateTime.Today)))
             ModelState.AddModelError(nameof(model.NgayHetHan), "Ngày hết hạn phải lớn hơn ngày lập thẻ.");
         if (!ModelState.IsValid) return View(model);

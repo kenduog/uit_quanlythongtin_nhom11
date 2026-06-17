@@ -70,6 +70,7 @@ public class DauSachController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Dausach model)
     {
+        ModelState.Remove(nameof(model.MaDauSach)); // Khóa sinh tự động, không có trong form.
         if (!ModelState.IsValid) return View(model);
 
         model.MaDauSach = await _maGen.SinhMaDauSachAsync();
