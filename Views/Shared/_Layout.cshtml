@@ -6,63 +6,192 @@
     <title>@ViewData["Title"] - Quản lý Thư viện</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Nhom11.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-md navbar-dark bg-primary mb-3 shadow-sm">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
-                    📚 Thư viện Nhóm 11
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                        aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-md-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="DauSach" asp-action="Index">Đầu sách</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="CuonSach" asp-action="Index">Cuốn sách</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="DocGia" asp-action="Index">Độc giả</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="PhieuMuon" asp-action="Index">Phiếu mượn</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="TraCuu" asp-action="Index">Tra cứu</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="BaoCao" asp-action="Index">Báo cáo</a></li>
-                    </ul>
-                    <a class="btn btn-light btn-sm" asp-controller="PhieuMuon" asp-action="Create">+ Lập phiếu mượn</a>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @if (TempData["Success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    @TempData["Success"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
-            @if (TempData["Error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @TempData["Error"]
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            }
-            @RenderBody()
-        </main>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    }
+
+    <!-- Mobile top bar -->
+    <nav class="navbar navbar-dark bg-primary d-md-none shadow-sm sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">📚 Thư viện</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMobile">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile offcanvas sidebar -->
+    <div class="offcanvas offcanvas-start bg-primary text-white d-md-none" id="sidebarMobile">
+        <div class="offcanvas-header border-bottom border-white border-opacity-25">
+            <h5 class="offcanvas-title">📚 Thư viện Nhóm 11</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <ul class="nav flex-column py-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "Home" ? "active bg-white bg-opacity-25" : "")" asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-house-door me-2"></i>Trang chủ
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "DauSach" ? "active bg-white bg-opacity-25" : "")" asp-controller="DauSach" asp-action="Index">
+                        <i class="bi bi-book me-2"></i>Đầu sách
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "CuonSach" ? "active bg-white bg-opacity-25" : "")" asp-controller="CuonSach" asp-action="Index">
+                        <i class="bi bi-journal-bookmark me-2"></i>Cuốn sách
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "DocGia" ? "active bg-white bg-opacity-25" : "")" asp-controller="DocGia" asp-action="Index">
+                        <i class="bi bi-people me-2"></i>Độc giả
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "PhieuMuon" ? "active bg-white bg-opacity-25" : "")" asp-controller="PhieuMuon" asp-action="Index">
+                        <i class="bi bi-clipboard-check me-2"></i>Phiếu mượn
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "TraCuu" ? "active bg-white bg-opacity-25" : "")" asp-controller="TraCuu" asp-action="Index">
+                        <i class="bi bi-search me-2"></i>Tra cứu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "BaoCao" ? "active bg-white bg-opacity-25" : "")" asp-controller="BaoCao" asp-action="Index">
+                        <i class="bi bi-bar-chart me-2"></i>Báo cáo
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "ThuTuc" ? "active bg-white bg-opacity-25" : "")" asp-controller="ThuTuc" asp-action="Index">
+                        <i class="bi bi-database-gear me-2"></i>Thủ tục (SP)
+                    </a>
+                </li>
+                <li class="nav-item mt-3 px-3">
+                    <a class="btn btn-light btn-sm w-100" asp-controller="PhieuMuon" asp-action="Create">
+                        <i class="bi bi-plus-circle me-1"></i>Lập phiếu mượn
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Hệ thống Quản lý Thư viện - Nhóm 11
+    <div class="d-flex" style="min-height:100vh">
+        <!-- Desktop sidebar -->
+        <aside class="sidebar d-none d-md-flex flex-column bg-primary text-white shadow" id="sidebar">
+            <div class="sidebar-brand px-2 py-3 border-bottom border-white border-opacity-25 d-flex align-items-center">
+                <a class="text-white text-decoration-none fw-bold d-flex align-items-center overflow-hidden flex-grow-1" asp-controller="Home" asp-action="Index">
+                    <span class="sidebar-icon flex-shrink-0">📚</span>
+                    <span class="sidebar-text ms-2 text-nowrap text-truncate">Thư viện Nhóm 11</span>
+                </a>
+                <button class="btn btn-sm btn-outline-light ms-auto flex-shrink-0 sidebar-toggle-btn" type="button" onclick="toggleSidebar()" title="Thu gọn / Mở rộng menu">
+                    <i class="bi bi-chevron-double-left toggle-icon-collapse"></i>
+                    <i class="bi bi-chevron-double-right toggle-icon-expand"></i>
+                </button>
+            </div>
+            <nav class="flex-grow-1 py-2 overflow-auto">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index" title="Trang chủ">
+                            <i class="bi bi-house-door"></i><span class="sidebar-text ms-2">Trang chủ</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "DauSach" ? "active" : "")" asp-controller="DauSach" asp-action="Index" title="Đầu sách">
+                            <i class="bi bi-book"></i><span class="sidebar-text ms-2">Đầu sách</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "CuonSach" ? "active" : "")" asp-controller="CuonSach" asp-action="Index" title="Cuốn sách">
+                            <i class="bi bi-journal-bookmark"></i><span class="sidebar-text ms-2">Cuốn sách</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "DocGia" ? "active" : "")" asp-controller="DocGia" asp-action="Index" title="Độc giả">
+                            <i class="bi bi-people"></i><span class="sidebar-text ms-2">Độc giả</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "PhieuMuon" ? "active" : "")" asp-controller="PhieuMuon" asp-action="Index" title="Phiếu mượn">
+                            <i class="bi bi-clipboard-check"></i><span class="sidebar-text ms-2">Phiếu mượn</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "TraCuu" ? "active" : "")" asp-controller="TraCuu" asp-action="Index" title="Tra cứu">
+                            <i class="bi bi-search"></i><span class="sidebar-text ms-2">Tra cứu</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "BaoCao" ? "active" : "")" asp-controller="BaoCao" asp-action="Index" title="Báo cáo">
+                            <i class="bi bi-bar-chart"></i><span class="sidebar-text ms-2">Báo cáo</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "ThuTuc" ? "active" : "")" asp-controller="ThuTuc" asp-action="Index" title="Thủ tục (SP)">
+                            <i class="bi bi-database-gear"></i><span class="sidebar-text ms-2">Thủ tục (SP)</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <div class="flex-grow-1 main-content">
+            <div class="container-fluid p-4">
+                <div class="d-flex justify-content-end mb-3">
+                    <a class="btn btn-primary btn-sm" asp-controller="PhieuMuon" asp-action="Create">
+                        <i class="bi bi-plus-circle me-1"></i>Lập phiếu mượn
+                    </a>
+                </div>
+                <main role="main" class="pb-3">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    @RenderBody()
+                </main>
+            </div>
+
+            <footer class="border-top footer text-muted py-3">
+                <div class="container-fluid px-4">
+                    &copy; 2026 - Hệ thống Quản lý Thư viện - Nhóm 11
+                </div>
+            </footer>
         </div>
-    </footer>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebar-collapsed', sidebar.classList.contains('collapsed'));
+        }
+        (function () {
+            if (localStorage.getItem('sidebar-collapsed') === 'true') {
+                var el = document.getElementById('sidebar');
+                if (el) el.classList.add('collapsed');
+            }
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

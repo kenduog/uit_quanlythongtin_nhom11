@@ -16,6 +16,7 @@ builder.Services.AddDbContext<DoAnNhom11Context>(options =>
 builder.Services.Configure<ThuVienOptions>(builder.Configuration.GetSection("ThuVien"));
 builder.Services.AddScoped<MaGenerator>();
 builder.Services.AddScoped<IPhieuMuonService, PhieuMuonService>();
+builder.Services.AddScoped<IThuTucService, ThuTucService>();
 
 // Dev-only: tự bật Cloudflare Tunnel khi chạy app và in link public ra console.
 // Tắt bằng "Tunnel:Enabled": false trong appsettings nếu không muốn chia sẻ.

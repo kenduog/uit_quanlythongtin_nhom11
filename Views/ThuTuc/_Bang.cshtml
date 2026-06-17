@@ -1,0 +1,51 @@
+@model Nhom11.Models.ViewModels.BangKetQua
+@{
+    var id = "tbl_" + Guid.NewGuid().ToString("N");
+}
+
+<div class="mb-3 border rounded shadow-sm">
+    <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light border-bottom"
+         role="button" data-bs-toggle="collapse" data-bs-target="#@id" aria-expanded="true">
+        <span class="d-flex align-items-center">
+            <i class="bi bi-table text-muted me-2"></i>
+            <b class="small">@Model.TieuDe</b>
+            <span class="badge bg-secondary ms-2">@Model.Dong.Count dòng</span>
+        </span>
+        <i class="bi bi-chevron-down small text-muted"></i>
+    </div>
+    <div class="collapse show" id="@id">
+        <div class="px-3 py-2">
+            <details class="mb-2">
+                <summary class="small text-muted" style="cursor:pointer">Xem câu lệnh SQL</summary>
+                <pre class="bg-light border rounded p-2 small mt-1 mb-0"><code>@Model.Sql</code></pre>
+            </details>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            @foreach (var c in Model.Cot)
+                            {
+                                <th class="text-nowrap">@c</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Dong.Count == 0)
+                        {
+                            <tr><td colspan="@Math.Max(1, Model.Cot.Length)" class="text-center text-muted fst-italic">(không có dòng)</td></tr>
+                        }
+                        @foreach (var d in Model.Dong)
+                        {
+                            <tr>
+                                @foreach (var o in d)
+                                {
+                                    <td>@o</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
