@@ -14,6 +14,7 @@ Run from the project root (the folder containing `Nhom11.csproj`):
 - Run (HTTP profile, http://localhost:5255): `dotnet run`
 - Run with HTTPS (https://localhost:7166): `dotnet run --launch-profile https`
 - Hot reload: `dotnet watch run`
+- Chia sẻ link public để cùng test: chỉ cần **chạy app như bình thường** (`dotnet run` hoặc F5). Ở môi trường Development, [Services/CloudflareTunnelService.cs](Services/CloudflareTunnelService.cs) (IHostedService) tự bật Cloudflare Tunnel và in `LINK CHIA SE: https://<random>.trycloudflare.com` ra console để copy; người nhận dán link là xem được (không đăng nhập, không trang chặn). Cần `winget install Cloudflare.cloudflared` một lần; link đổi mỗi lần chạy; tắt bằng `"Tunnel": { "Enabled": false }` trong appsettings. `Program.cs` bật `UseForwardedHeaders` ở Development để link qua tunnel hoạt động đúng.
 - Re-scaffold entities after DB schema changes (overwrites `Models/Entities` + `Data/`):
   `dotnet ef dbcontext scaffold "Name=ConnectionStrings:DefaultConnection" Microsoft.EntityFrameworkCore.SqlServer -o Models/Entities --context-dir Data --context DoAnNhom11Context --no-onconfiguring --force`
 
