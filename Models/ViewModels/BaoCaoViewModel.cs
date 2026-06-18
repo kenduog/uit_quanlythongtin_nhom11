@@ -10,6 +10,7 @@ public class BaoCaoViewModel
     public List<PhieuQuaHanItem> PhieuQuaHan { get; set; } = new();
     public List<DocGiaNoItem> DocGiaCoNo { get; set; } = new();
     public List<SachMuonNhieuItem> SachMuonNhieu { get; set; } = new();
+    public List<ChiTietPhatItem> ChiTietPhatTrongKy { get; set; } = new();
     public decimal TongTienPhatTrongKy { get; set; }
 }
 
@@ -35,4 +36,15 @@ public class SachMuonNhieuItem
     public string TenSach { get; set; } = string.Empty;
     public string TacGia { get; set; } = string.Empty;
     public int SoLuotMuon { get; set; }
+}
+
+public class ChiTietPhatItem
+{
+    public string MaCuonSach { get; set; } = string.Empty;
+    public string TenSach { get; set; } = string.Empty;
+    public string MaPhieuMuon { get; set; } = string.Empty;
+    public string HoTenDocGia { get; set; } = string.Empty;
+    public DateOnly NgayTraThucTe { get; set; }
+    public string? HienTrangKhiTra { get; set; }
+    public decimal TienPhat { get; set; }
 }

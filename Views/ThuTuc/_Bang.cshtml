@@ -10,6 +10,10 @@
             <i class="bi bi-table text-muted me-2"></i>
             <b class="small">@Model.TieuDe</b>
             <span class="badge bg-secondary ms-2">@Model.Dong.Count dòng</span>
+            @if (Model.SoDongNoiBat > 0)
+            {
+                <span class="badge bg-warning text-dark ms-2"><i class="bi bi-stars me-1"></i>@Model.SoDongNoiBat dòng mới/thay đổi</span>
+            }
         </span>
         <i class="bi bi-chevron-down small text-muted"></i>
     </div>
@@ -34,12 +38,20 @@
                         {
                             <tr><td colspan="@Math.Max(1, Model.Cot.Length)" class="text-center text-muted fst-italic">(không có dòng)</td></tr>
                         }
-                        @foreach (var d in Model.Dong)
+                        @for (int i = 0; i < Model.Dong.Count; i++)
                         {
-                            <tr>
-                                @foreach (var o in d)
+                            var d = Model.Dong[i];
+                            var noiBat = i < Model.SoDongNoiBat;
+                            <tr class="@(noiBat ? "table-warning fw-semibold" : null)">
+                                @for (int j = 0; j < d.Length; j++)
                                 {
-                                    <td>@o</td>
+                                    <td>
+                                        @d[j]
+                                        @if (noiBat && j == 0)
+                                        {
+                                            <span class="badge bg-warning text-dark ms-1"><i class="bi bi-stars"></i> Mới/Thay đổi</span>
+                                        }
+                                    </td>
                                 }
                             </tr>
                         }

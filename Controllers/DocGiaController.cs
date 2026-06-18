@@ -76,6 +76,8 @@ public class DocGiaController : Controller
         ModelState.Remove(nameof(model.MaDocGia)); // Khóa sinh tự động, không có trong form.
         if (model.NgayHetHan <= (model.NgayLapThe ?? DateOnly.FromDateTime(DateTime.Today)))
             ModelState.AddModelError(nameof(model.NgayHetHan), "Ngày hết hạn phải lớn hơn ngày lập thẻ.");
+        if (model.TongNo < 0)
+            ModelState.AddModelError(nameof(model.TongNo), "Tổng nợ không được âm.");
         if (!ModelState.IsValid) return View(model);
 
         model.MaDocGia = await _maGen.SinhMaDocGiaAsync();
@@ -102,6 +104,8 @@ public class DocGiaController : Controller
         if (id != model.MaDocGia) return NotFound();
         if (model.NgayHetHan <= (model.NgayLapThe ?? DateOnly.FromDateTime(DateTime.Today)))
             ModelState.AddModelError(nameof(model.NgayHetHan), "Ngày hết hạn phải lớn hơn ngày lập thẻ.");
+        if (model.TongNo < 0)
+            ModelState.AddModelError(nameof(model.TongNo), "Tổng nợ không được âm.");
         if (!ModelState.IsValid) return View(model);
 
         _db.Update(model);

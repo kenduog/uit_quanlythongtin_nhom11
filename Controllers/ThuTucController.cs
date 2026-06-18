@@ -62,6 +62,7 @@ public class ThuTucController : Controller
         var kq = await _svc.ChayProcAsync("SP_LapPhieuMuon",
             ("MaDocGia", MaDocGia), ("MaCuonSach", MaCuonSach), ("HanPhaiTra", HanPhaiTra));
         var sau = await ChupAsync(BangLapPhieu);
+        DanhDauThayDoi(truoc, sau);
 
         var vm = new ThuTucDemoViewModel
         {
@@ -92,8 +93,15 @@ public class ThuTucController : Controller
     };
 
     [HttpGet]
-    public async Task<IActionResult> TraSach()
+    public async Task<IActionResult> TraSach(string? MaPhieuMuon)
     {
+        // Phiếu mặc định = phiếu chưa trả mới nhất; cuốn sách lấy theo đúng phiếu đó.
+        var phieuChon = MaPhieuMuon ?? await _db.Phieumuons.AsNoTracking()
+            .Where(p => p.ChitietPms.Any(ct => ct.NgayTraThucTe == null))
+            .OrderByDescending(p => p.MaPhieuMuon)
+            .Select(p => p.MaPhieuMuon)
+            .FirstOrDefaultAsync();
+
         var vm = new ThuTucDemoViewModel
         {
             ActionName = nameof(TraSach),
@@ -103,8 +111,8 @@ public class ThuTucController : Controller
             CauSql = "EXEC SP_TraSach @MaPhieuMuon, @MaCuonSach, @HienTrangKhiTra",
             Truong =
             {
-                new TruongNhap { Ten = "MaPhieuMuon", Nhan = "Phiếu mượn", Loai = "select", Options = await DdPhieuMuonAsync(null) },
-                new TruongNhap { Ten = "MaCuonSach", Nhan = "Cuốn sách (đang cho mượn)", Loai = "select", Options = await DdCuonSachAsync("Đã cho mượn", null) },
+                new TruongNhap { Ten = "MaPhieuMuon", Nhan = "Phiếu mượn (còn sách chưa trả)", Loai = "select", Options = await DdPhieuMuonChuaTraAsync(phieuChon), TaiLaiKhiDoi = true },
+                new TruongNhap { Ten = "MaCuonSach", Nhan = "Cuốn sách (chưa trả của phiếu)", Loai = "select", Options = await DdCuonSachCuaPhieuAsync(phieuChon, null) },
                 new TruongNhap { Ten = "HienTrangKhiTra", Nhan = "Hiện trạng khi trả", Loai = "select", Options = DdHienTrang(null) },
             },
             BangTruoc = await ChupAsync(BangTraSach),
@@ -120,6 +128,7 @@ public class ThuTucController : Controller
         var kq = await _svc.ChayProcAsync("SP_TraSach",
             ("MaPhieuMuon", MaPhieuMuon), ("MaCuonSach", MaCuonSach), ("HienTrangKhiTra", HienTrangKhiTra));
         var sau = await ChupAsync(BangTraSach);
+        DanhDauThayDoi(truoc, sau);
 
         var vm = new ThuTucDemoViewModel
         {
@@ -129,8 +138,8 @@ public class ThuTucController : Controller
             CauSql = ExecSql("SP_TraSach", ("MaPhieuMuon", MaPhieuMuon), ("MaCuonSach", MaCuonSach), ("HienTrangKhiTra", HienTrangKhiTra)),
             Truong =
             {
-                new TruongNhap { Ten = "MaPhieuMuon", Nhan = "Phiếu mượn", Loai = "select", Options = await DdPhieuMuonAsync(MaPhieuMuon) },
-                new TruongNhap { Ten = "MaCuonSach", Nhan = "Cuốn sách", Loai = "select", Options = await DdCuonSachAsync(null, MaCuonSach) },
+                new TruongNhap { Ten = "MaPhieuMuon", Nhan = "Phiếu mượn (còn sách chưa trả)", Loai = "select", Options = await DdPhieuMuonChuaTraAsync(MaPhieuMuon), TaiLaiKhiDoi = true },
+                new TruongNhap { Ten = "MaCuonSach", Nhan = "Cuốn sách (chưa trả của phiếu)", Loai = "select", Options = await DdCuonSachCuaPhieuAsync(MaPhieuMuon, MaCuonSach) },
                 new TruongNhap { Ten = "HienTrangKhiTra", Nhan = "Hiện trạng khi trả", Loai = "select", Options = DdHienTrang(HienTrangKhiTra) },
             },
             BangTruoc = truoc,
@@ -174,6 +183,7 @@ public class ThuTucController : Controller
         var truoc = await ChupAsync(BangDocGia);
         var kq = await _svc.ChayProcAsync("SP_ThuTienPhat", ("MaDocGia", MaDocGia), ("SoTienThu", SoTienThu));
         var sau = await ChupAsync(BangDocGia);
+        DanhDauThayDoi(truoc, sau);
 
         var vm = new ThuTucDemoViewModel
         {
@@ -231,6 +241,7 @@ public class ThuTucController : Controller
         var kq = await _svc.ChayProcAsync("SP_NhapSachKho",
             ("MaCuonSach", MaCuonSach), ("MaDauSach", MaDauSach), ("HienTrang", HienTrang));
         var sau = await ChupAsync(BangNhapKho);
+        DanhDauThayDoi(truoc, sau);
 
         var vm = new ThuTucDemoViewModel
         {
@@ -281,6 +292,7 @@ public class ThuTucController : Controller
         var truoc = await ChupAsync(BangDocGia);
         var kq = await _svc.ChayProcAsync("SP_GiaHanThe", ("MaDocGia", MaDocGia), ("SoThangGiaHan", SoThangGiaHan));
         var sau = await ChupAsync(BangDocGia);
+        DanhDauThayDoi(truoc, sau);
 
         var vm = new ThuTucDemoViewModel
         {
@@ -311,6 +323,22 @@ public class ThuTucController : Controller
         return list;
     }
 
+    /// <summary>So sánh diff TRƯỚC/SAU: dòng mới chèn hoặc vừa bị sửa được đưa lên đầu bảng + đánh dấu.</summary>
+    private static void DanhDauThayDoi(List<BangKetQua> truoc, List<BangKetQua> sau)
+    {
+        var mapCu = truoc.ToDictionary(b => b.TieuDe, b => b.Dong.Select(KhoaDong).ToHashSet());
+        foreach (var b in sau)
+        {
+            if (!mapCu.TryGetValue(b.TieuDe, out var cu)) continue;
+            var moi = b.Dong.Where(d => !cu.Contains(KhoaDong(d))).ToList();
+            var giu = b.Dong.Where(d =>  cu.Contains(KhoaDong(d))).ToList();
+            b.Dong = moi.Concat(giu).ToList();   // dòng mới/đổi lên đầu
+            b.SoDongNoiBat = moi.Count;
+        }
+    }
+
+    private static string KhoaDong(string?[] d) => string.Join("", d.Select(x => x ?? " "));
+
     private async Task<SelectList> DdDocGiaAsync(string? sel)
     {
         var items = await _db.Docgia.AsNoTracking().OrderBy(d => d.MaDocGia)
@@ -335,6 +363,28 @@ public class ThuTucController : Controller
             .Select(p => new { p.MaPhieuMuon, Hien = p.MaPhieuMuon + " - " + p.MaDocGia })
             .ToListAsync();
         return new SelectList(items, "MaPhieuMuon", "Hien", sel);
+    }
+
+    /// <summary>Chỉ phiếu còn ít nhất 1 cuốn chưa trả (để demo trả sách).</summary>
+    private async Task<SelectList> DdPhieuMuonChuaTraAsync(string? sel)
+    {
+        var items = await _db.Phieumuons.AsNoTracking()
+            .Where(p => p.ChitietPms.Any(ct => ct.NgayTraThucTe == null))
+            .OrderByDescending(p => p.MaPhieuMuon)
+            .Select(p => new { p.MaPhieuMuon, Hien = p.MaPhieuMuon + " - " + p.MaDocGia })
+            .ToListAsync();
+        return new SelectList(items, "MaPhieuMuon", "Hien", sel);
+    }
+
+    /// <summary>Chỉ các cuốn (chưa trả) thuộc đúng phiếu mượn đang chọn.</summary>
+    private async Task<SelectList> DdCuonSachCuaPhieuAsync(string? maPhieuMuon, string? sel)
+    {
+        var items = await _db.ChitietPms.AsNoTracking()
+            .Where(ct => ct.MaPhieuMuon == maPhieuMuon && ct.NgayTraThucTe == null)
+            .OrderBy(ct => ct.MaCuonSach)
+            .Select(ct => new { ct.MaCuonSach, Hien = ct.MaCuonSach + " - " + ct.MaCuonSachNavigation.MaDauSachNavigation.TenSach })
+            .ToListAsync();
+        return new SelectList(items, "MaCuonSach", "Hien", sel);
     }
 
     private async Task<SelectList> DdDauSachAsync(string? sel)

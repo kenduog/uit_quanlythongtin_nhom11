@@ -86,12 +86,28 @@ public class BaoCaoController : Controller
             .Take(10)
             .ToListAsync();
 
-        // 5. Tổng tiền phạt phát sinh trong kỳ (theo ngày trả thực tế).
-        vm.TongTienPhatTrongKy = await _db.ChitietPms
+        // 5. Chi tiết tiền phạt phát sinh trong kỳ (theo ngày trả thực tế).
+        vm.ChiTietPhatTrongKy = await _db.ChitietPms
             .Where(ct => ct.NgayTraThucTe != null
                       && ct.NgayTraThucTe >= vm.TuNgay
-                      && ct.NgayTraThucTe <= vm.DenNgay)
-            .SumAsync(ct => ct.TienPhat ?? 0);
+                      && ct.NgayTraThucTe <= vm.DenNgay
+                      && (ct.TienPhat ?? 0) > 0)
+            .Include(ct => ct.MaPhieuMuonNavigation).ThenInclude(p => p.MaDocGiaNavigation)
+            .Include(ct => ct.MaCuonSachNavigation).ThenInclude(c => c.MaDauSachNavigation)
+            .Select(ct => new ChiTietPhatItem
+            {
+                MaCuonSach = ct.MaCuonSach,
+                TenSach = ct.MaCuonSachNavigation.MaDauSachNavigation.TenSach,
+                MaPhieuMuon = ct.MaPhieuMuon,
+                HoTenDocGia = ct.MaPhieuMuonNavigation.MaDocGiaNavigation.HoTen,
+                NgayTraThucTe = ct.NgayTraThucTe!.Value,
+                HienTrangKhiTra = ct.HienTrangKhiTra,
+                TienPhat = ct.TienPhat ?? 0
+            })
+            .OrderByDescending(x => x.NgayTraThucTe)
+            .ToListAsync();
+
+        vm.TongTienPhatTrongKy = vm.ChiTietPhatTrongKy.Sum(x => x.TienPhat);
 
         return View(vm);
     }

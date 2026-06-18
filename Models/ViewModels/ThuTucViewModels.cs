@@ -9,6 +9,7 @@ public class BangKetQua
     public string Sql { get; set; } = string.Empty;
     public string[] Cot { get; set; } = Array.Empty<string>();
     public List<string?[]> Dong { get; set; } = new();
+    public int SoDongNoiBat { get; set; }   // số dòng đầu tiên là dòng mới/thay đổi (để highlight)
 }
 
 /// <summary>Một ô nhập tham số trên form demo (render generic theo Loai).</summary>
@@ -19,6 +20,7 @@ public class TruongNhap
     public string Loai { get; set; } = "text";          // text | number | date | select
     public SelectList? Options { get; set; }            // cho loai = select
     public string? GhiChu { get; set; }
+    public bool TaiLaiKhiDoi { get; set; }              // true: đổi select sẽ reload trang (GET) để nạp lại dropdown phụ thuộc
 }
 
 /// <summary>Dữ liệu cho 1 trang demo stored procedure theo bố cục B1–B5.</summary>

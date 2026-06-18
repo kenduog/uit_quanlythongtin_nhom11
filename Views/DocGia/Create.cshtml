@@ -25,7 +25,8 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Tổng nợ</label>
-                <input asp-for="TongNo" class="form-control" />
+                <input asp-for="TongNo" type="number" min="0" step="1000" class="form-control" />
+                <span asp-validation-for="TongNo" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Trạng thái</label>

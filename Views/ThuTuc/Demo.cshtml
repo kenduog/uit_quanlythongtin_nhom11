@@ -102,11 +102,19 @@
                                     <label class="form-label fw-semibold small">@t.Nhan</label>
                                     @if (t.Loai == "select")
                                     {
-                                        <select name="@t.Ten" class="form-select form-select-sm" asp-items="t.Options"></select>
+                                        @if (t.TaiLaiKhiDoi)
+                                        {
+                                            <select name="@t.Ten" class="form-select form-select-sm" asp-items="t.Options"
+                                                    onchange="location.href='@Url.Action(Model.ActionName)?@(t.Ten)=' + encodeURIComponent(this.value)"></select>
+                                        }
+                                        else
+                                        {
+                                            <select name="@t.Ten" class="form-select form-select-sm" asp-items="t.Options"></select>
+                                        }
                                     }
                                     else if (t.Loai == "number")
                                     {
-                                        <input name="@t.Ten" type="number" step="any" value="@val" class="form-control form-control-sm" required />
+                                        <input name="@t.Ten" type="number" min="0" step="any" value="@val" class="form-control form-control-sm" required />
                                     }
                                     else if (t.Loai == "date")
                                     {
