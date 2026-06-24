@@ -1,3 +1,4 @@
+@inject Microsoft.Extensions.Options.IOptions<Nhom11.Services.ThuVienOptions> ThuVienOpt
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -73,6 +74,11 @@
                         <i class="bi bi-database-gear me-2"></i>Thủ tục (SP)
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3 py-2 @(currentController == "TuDongHoa" ? "active bg-white bg-opacity-25" : "")" asp-controller="TuDongHoa" asp-action="Index">
+                        <i class="bi bi-diagram-3 me-2"></i>Tự động hóa
+                    </a>
+                </li>
                 <li class="nav-item mt-3 px-3">
                     <a class="btn btn-light btn-sm w-100" asp-controller="PhieuMuon" asp-action="Create">
                         <i class="bi bi-plus-circle me-1"></i>Lập phiếu mượn
@@ -137,6 +143,11 @@
                             <i class="bi bi-database-gear"></i><span class="sidebar-text ms-2">Thủ tục (SP)</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebar-link text-white @(currentController == "TuDongHoa" ? "active" : "")" asp-controller="TuDongHoa" asp-action="Index" title="Tự động hóa">
+                            <i class="bi bi-diagram-3"></i><span class="sidebar-text ms-2">Tự động hóa</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -145,9 +156,9 @@
         <div class="flex-grow-1 main-content">
             <div class="container-fluid p-4">
                 <div class="d-flex justify-content-end mb-3">
-                    <a class="btn btn-primary btn-sm" asp-controller="PhieuMuon" asp-action="Create">
-                        <i class="bi bi-plus-circle me-1"></i>Lập phiếu mượn
-                    </a>
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" data-bs-toggle="modal" data-bs-target="#modalQuyDinh" title="Quy định mượn trả của thư viện">
+                        <i class="bi bi-question-circle me-1"></i>Quy định thư viện
+                    </button>
                 </div>
                 <main role="main" class="pb-3">
                     @if (TempData["Success"] != null)
@@ -173,6 +184,47 @@
                     &copy; 2026 - Hệ thống Quản lý Thư viện - Nhóm 11
                 </div>
             </footer>
+        </div>
+    </div>
+
+    <!-- Modal: Quy định / cấu hình nghiệp vụ (đọc từ section "ThuVien" trong appsettings.json) -->
+    <div class="modal fade" id="modalQuyDinh" tabindex="-1" aria-labelledby="modalQuyDinhLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalQuyDinhLabel">
+                        <i class="bi bi-info-circle me-2"></i>Quy định mượn trả của thư viện
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">
+                        Các tham số nghiệp vụ đang áp dụng cho việc mượn / trả (cấu hình ở mục
+                        <code>ThuVien</code> trong <code>appsettings.json</code>).
+                    </p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span><i class="bi bi-cash-coin text-warning me-2"></i>Phí trễ hạn mỗi ngày</span>
+                            <span class="badge bg-warning text-dark fs-6">@ThuVienOpt.Value.PhatQuaHanMoiNgay.ToString("N0")đ / ngày</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span><i class="bi bi-lock text-danger me-2"></i>Ngưỡng nợ bị khóa thẻ</span>
+                            <span class="badge bg-danger fs-6">@ThuVienOpt.Value.NguongKhoaThe.ToString("N0")đ</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span><i class="bi bi-stack text-primary me-2"></i>Số sách mượn tối đa / phiếu</span>
+                            <span class="badge bg-primary fs-6">@ThuVienOpt.Value.SoSachMuonToiDa cuốn</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span><i class="bi bi-calendar-check text-success me-2"></i>Số ngày mượn mặc định</span>
+                            <span class="badge bg-success fs-6">@ThuVienOpt.Value.SoNgayMuonMacDinh ngày</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
         </div>
     </div>
 

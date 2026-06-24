@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Tự động hóa (Trigger / Function / Cursor)";
+
+    var nhomTuDongHoa = new[]
+    {
+        ("Functions (Hàm)", "bi-braces", "primary", new[]
+        {
+            ("TinhTienTre", "FUNC_TinhTienTre", "Tính tiền phạt trễ", "Số ngày trễ × 5.000đ.", "bi-calculator", "primary"),
+            ("KiemTraThe", "FUNC_KiemTraThe", "Kiểm tra thẻ hợp lệ", "Trả 1/0 theo khóa/hết hạn/nợ.", "bi-shield-check", "success"),
+            ("ThongKeNo", "FUNC_ThongKeNo", "Thống kê nợ", "Tổng nợ hiện tại của độc giả.", "bi-cash-stack", "warning"),
+        }),
+        ("Triggers (Bẫy sự kiện)", "bi-lightning-charge", "danger", new[]
+        {
+            ("ChanMuonSach", "TRG_ChanMuonSach", "Chặn mượn thẻ lỗi", "INSERT phiếu → chặn nếu thẻ khóa/hết hạn/nợ cao.", "bi-hand-index-thumb", "danger"),
+            ("XuatKho", "TRG_XuatKho", "Tự xuất kho", "INSERT chi tiết → cuốn sang 'Đã cho mượn'.", "bi-box-arrow-right", "primary"),
+            ("NhapKho", "TRG_NhapKho", "Tự nhập kho", "UPDATE ngày trả → cuốn về 'Còn trong kho'.", "bi-box-arrow-in-left", "success"),
+            ("PhatHuHong", "TRG_PhatHuHong", "Tự phạt hư/mất", "UPDATE hiện trạng → cộng phạt vào nợ.", "bi-exclamation-octagon", "warning"),
+            ("KhoaThe", "TRG_KhoaThe", "Tự khóa thẻ", "UPDATE nợ > 50k → thẻ 'Bị khóa'.", "bi-lock", "secondary"),
+        }),
+        ("Cursors (Con trỏ)", "bi-arrow-repeat", "info", new[]
+        {
+            ("TopSachHot", "SP_CUR_TopSachHot", "Top 5 sách hot", "Con trỏ thống kê sách mượn nhiều nhất (chỉ đọc).", "bi-fire", "info"),
+            ("QuetPhatNguoi", "SP_CUR_QuetPhatNguoi", "Quét phạt trễ hạn", "Con trỏ cộng phí trễ vào nợ độc giả (ghi dữ liệu).", "bi-search", "danger"),
+        }),
+    };
+}
+
+<div class="d-flex align-items-center mb-3">
+    <i class="bi bi-diagram-3 fs-3 text-primary me-2"></i>
+    <div>
+        <h3 class="mb-0">Demo Tự động hóa</h3>
+        <small class="text-muted">Trigger · Function · Cursor — chạy trực tiếp đối tượng SQL trong CSDL</small>
+    </div>
+</div>
+
+@foreach (var (tenNhom, iconNhom, mauNhom, ds) in nhomTuDongHoa)
+{
+    <h5 class="mt-4 mb-2 d-flex align-items-center text-@mauNhom">
+        <i class="bi @iconNhom me-2"></i>@tenNhom
+    </h5>
+    <div class="row g-3">
+        @foreach (var (action, ten, tieuDe, mota, icon, color) in ds)
+        {
+            <div class="col-md-6 col-lg-4">
+                <a asp-action="@action" class="text-decoration-none">
+                    <div class="card h-100 border-start border-4 border-@color shadow-sm card-hover">
+                        <div class="card-body d-flex align-items-start">
+                            <div class="rounded-circle bg-@color bg-opacity-10 p-2 me-3 flex-shrink-0">
+                                <i class="bi @icon fs-4 text-@color"></i>
+                            </div>
+                            <div>
+                                <h6 class="card-title mb-1 text-dark">@tieuDe</h6>
+                                <code class="small text-muted">@ten</code>
+                                <p class="card-text text-muted small mt-1 mb-0">@mota</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4 p-3 bg-light rounded border">
+    <h6 class="mb-2"><i class="bi bi-info-circle me-1"></i>Hướng dẫn</h6>
+    <ol class="mb-0 small text-muted">
+        <li>Chọn một đối tượng (Function / Trigger / Cursor) ở trên để vào trang demo</li>
+        <li>Xem bài toán, câu lệnh SQL và dữ liệu hiện tại trong CSDL</li>
+        <li>Nhập tham số (nếu có) và nhấn <b>Thực thi</b> để chạy đối tượng SQL thật</li>
+        <li>So sánh dữ liệu trước/sau để thấy tác động của trigger/cursor</li>
+    </ol>
+</div>
