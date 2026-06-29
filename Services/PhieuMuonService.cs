@@ -86,7 +86,7 @@ public class PhieuMuonService : IPhieuMuonService
                     MaCuonSach = cuon.MaCuonSach,
                     TienPhat = 0
                 });
-                cuon.TrangThaiKho = TrangThaiDaChoMuon;
+                // TRG_XuatKho tự set TrangThaiKho = 'Đã cho mượn' khi INSERT CHITIET_PM.
             }
 
             await _db.SaveChangesAsync();
@@ -120,7 +120,7 @@ public class PhieuMuonService : IPhieuMuonService
         await using var tran = await _db.Database.BeginTransactionAsync();
         try
         {
-            decimal tongPhatLanNay = 0;
+            decimal tongPhatQuaHan = 0;
             int soCuonDaTra = 0;
 
             foreach (var dong in canTra)
@@ -129,40 +129,48 @@ public class PhieuMuonService : IPhieuMuonService
                 if (ct == null) continue;            // cuốn không thuộc phiếu
                 if (ct.NgayTraThucTe != null) continue; // đã trả rồi, bỏ qua
 
-                decimal phat = TinhTienPhat(phieu.HanPhaiTra, homNay, dong.HienTrangKhiTra);
+                // Chỉ tính phạt quá hạn — trigger TRG_PhatHuHong sẽ tự cộng phạt hư hỏng.
+                int soNgayTre = Math.Max(0, homNay.DayNumber - phieu.HanPhaiTra.DayNumber);
+                decimal phatQuaHan = soNgayTre * _opt.PhatQuaHanMoiNgay;
+
                 ct.NgayTraThucTe = homNay;
                 ct.HienTrangKhiTra = dong.HienTrangKhiTra;
-                ct.TienPhat = phat;
-                tongPhatLanNay += phat;
+                ct.TienPhat = phatQuaHan; // Trigger sẽ += phạt hư hỏng
+                tongPhatQuaHan += phatQuaHan;
                 soCuonDaTra++;
 
-                // Cập nhật cuốn sách: về kho + cập nhật hiện trạng.
+                // TRG_NhapKho tự set TrangThaiKho = 'Còn trong kho' khi NgayTraThucTe thay đổi.
                 var cuon = ct.MaCuonSachNavigation;
-                if (cuon != null)
+                if (cuon != null && !string.IsNullOrWhiteSpace(dong.HienTrangKhiTra))
                 {
-                    cuon.TrangThaiKho = TrangThaiConTrongKho;
-                    if (!string.IsNullOrWhiteSpace(dong.HienTrangKhiTra))
-                        cuon.HienTrangSach = dong.HienTrangKhiTra;
+                    cuon.HienTrangSach = dong.HienTrangKhiTra;
                 }
             }
 
             if (soCuonDaTra == 0)
                 return KetQua.Loi("Các cuốn đã chọn đều đã được trả trước đó.");
 
-            // Cập nhật tổng nợ độc giả và tự khóa thẻ nếu vượt ngưỡng.
+            // Detach độc giả — trigger đã xử lý TongNo cho phạt hư hỏng,
+            // EF không được gửi UPDATE ghi đè.
             var docGia = phieu.MaDocGiaNavigation;
-            if (docGia != null && tongPhatLanNay > 0)
-            {
-                docGia.TongNo = (docGia.TongNo ?? 0) + tongPhatLanNay;
-                if (docGia.TongNo > _opt.NguongKhoaThe)
-                    docGia.TrangThai = DocGiaBiKhoa;
-            }
+            if (docGia != null)
+                _db.Entry(docGia).State = EntityState.Unchanged;
 
             await _db.SaveChangesAsync();
+
+            // Cộng phạt quá hạn vào TongNo bằng raw SQL (không xung đột với trigger).
+            // TRG_KhoaThe sẽ tự khóa thẻ nếu TongNo > 50.000đ.
+            if (tongPhatQuaHan > 0)
+            {
+                await _db.Database.ExecuteSqlRawAsync(
+                    "UPDATE DOCGIA SET TongNo = ISNULL(TongNo, 0) + {0} WHERE MaDocGia = {1}",
+                    tongPhatQuaHan, phieu.MaDocGia);
+            }
+
             await tran.CommitAsync();
 
             var msg = $"Đã ghi nhận trả {soCuonDaTra} cuốn cho phiếu {maPhieuMuon}.";
-            if (tongPhatLanNay > 0) msg += $" Tiền phạt: {tongPhatLanNay:N0}đ.";
+            if (tongPhatQuaHan > 0) msg += $" Phạt quá hạn: {tongPhatQuaHan:N0}đ.";
             return KetQua.Ok(msg, maPhieuMuon);
         }
         catch (Exception ex)
@@ -190,11 +198,9 @@ public class PhieuMuonService : IPhieuMuonService
     private static decimal PhatHuHong(string? hienTrang)
     {
         if (string.IsNullOrWhiteSpace(hienTrang)) return 0;
-        var s = hienTrang.ToLowerInvariant();
 
-        if (s.Contains("mất")) return 360000;               // mất sách
-        if (s.Contains("rách nát") || s.Contains("hỏng nặng")) return 150000;
-        if (s.Contains("rách") || s.Contains("hư")) return 50000;
-        return 0;                                            // mới / bình thường / cũ
+        if (hienTrang == "Mất sách") return 360000;
+        if (hienTrang == "Hư") return 50000;
+        return 0;
     }
 }

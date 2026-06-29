@@ -65,7 +65,7 @@ public class CuonSachController : Controller
     public async Task<IActionResult> Create()
     {
         await NapDropdownAsync(null);
-        return View(new Cuonsach { TrangThaiKho = PhieuMuonService.TrangThaiConTrongKho, HienTrangSach = "Mới" });
+        return View(new Cuonsach { TrangThaiKho = PhieuMuonService.TrangThaiConTrongKho, HienTrangSach = "Bình thường" });
     }
 
     [HttpPost]

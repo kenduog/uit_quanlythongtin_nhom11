@@ -24,7 +24,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Hiện trạng sách</label>
-                <input asp-for="HienTrangSach" class="form-control" />
+                <select asp-for="HienTrangSach" class="form-select">
+                    <option value="Bình thường">Bình thường</option>
+                    <option value="Hư">Hư</option>
+                    <option value="Mất sách">Mất sách</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Cập nhật</button>
             <a asp-action="Index" class="btn btn-secondary">Quay lại</a>

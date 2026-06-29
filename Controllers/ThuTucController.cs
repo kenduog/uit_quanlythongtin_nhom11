@@ -226,7 +226,7 @@ public class ThuTucController : Controller
             {
                 new TruongNhap { Ten = "MaCuonSach", Nhan = "Mã cuốn sách (tự đặt, vd CS01_05)", Loai = "text" },
                 new TruongNhap { Ten = "MaDauSach", Nhan = "Đầu sách", Loai = "select", Options = await DdDauSachAsync(null) },
-                new TruongNhap { Ten = "HienTrang", Nhan = "Hiện trạng", Loai = "select", Options = DdHienTrang("Mới") },
+                new TruongNhap { Ten = "HienTrang", Nhan = "Hiện trạng", Loai = "select", Options = DdHienTrang("Bình thường") },
             },
             BangTruoc = await ChupAsync(BangNhapKho),
         };
@@ -397,7 +397,7 @@ public class ThuTucController : Controller
 
     private static SelectList DdHienTrang(string? sel)
     {
-        var ds = new[] { "Bình thường", "Mới", "Cũ", "Rách", "Hư", "Rách nát", "Hỏng nặng", "Mất" };
+        var ds = new[] { "Bình thường", "Hư", "Mất sách" };
         return new SelectList(ds, sel);
     }
 

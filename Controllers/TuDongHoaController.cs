@@ -371,7 +371,7 @@ public class TuDongHoaController : Controller
             {
                 new TruongNhap { Ten = "MaPhieuMuon", Nhan = "Phiếu mượn (còn sách chưa trả)", Loai = "select", Options = await DdPhieuMuonChuaTraAsync(phieuChon), TaiLaiKhiDoi = true },
                 new TruongNhap { Ten = "MaCuonSach", Nhan = "Cuốn sách (chưa trả của phiếu)", Loai = "select", Options = await DdCuonSachCuaPhieuAsync(phieuChon, null) },
-                new TruongNhap { Ten = "HienTrang", Nhan = "Hiện trạng khi trả", Loai = "select", Options = DdHienTrangHuHong(null), GhiChu = "Chứa 'Rách' → 50k, chứa 'Mất' → 360k" },
+                new TruongNhap { Ten = "HienTrang", Nhan = "Hiện trạng khi trả", Loai = "select", Options = DdHienTrangHuHong(null), GhiChu = "'Hư' → 50k, 'Mất sách' → 360k" },
             },
             BangTruoc = await ChupAsync(BangDocGiaChiTiet),
         };
@@ -399,7 +399,7 @@ public class TuDongHoaController : Controller
             {
                 new TruongNhap { Ten = "MaPhieuMuon", Nhan = "Phiếu mượn (còn sách chưa trả)", Loai = "select", Options = await DdPhieuMuonChuaTraAsync(MaPhieuMuon), TaiLaiKhiDoi = true },
                 new TruongNhap { Ten = "MaCuonSach", Nhan = "Cuốn sách (chưa trả của phiếu)", Loai = "select", Options = await DdCuonSachCuaPhieuAsync(MaPhieuMuon, MaCuonSach) },
-                new TruongNhap { Ten = "HienTrang", Nhan = "Hiện trạng khi trả", Loai = "select", Options = DdHienTrangHuHong(HienTrang), GhiChu = "Chứa 'Rách' → 50k, chứa 'Mất' → 360k" },
+                new TruongNhap { Ten = "HienTrang", Nhan = "Hiện trạng khi trả", Loai = "select", Options = DdHienTrangHuHong(HienTrang), GhiChu = "'Hư' → 50k, 'Mất sách' → 360k" },
             },
             BangTruoc = truoc,
             BangSau = sau,
@@ -653,7 +653,7 @@ public class TuDongHoaController : Controller
 
     private static SelectList DdHienTrangHuHong(string? sel)
     {
-        var ds = new[] { "Bình thường", "Rách bìa nhẹ", "Rách nát", "Hỏng nặng", "Mất" };
+        var ds = new[] { "Bình thường", "Hư", "Mất sách" };
         return new SelectList(ds, sel);
     }
 }

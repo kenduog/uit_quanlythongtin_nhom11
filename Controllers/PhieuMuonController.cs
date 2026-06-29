@@ -77,10 +77,11 @@ public class PhieuMuonController : Controller
     }
 
     // GET: /PhieuMuon/Create - màn hình lập phiếu mượn
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(string? maDocGia)
     {
         var vm = new LapPhieuMuonViewModel
         {
+            MaDocGia = maDocGia,
             HanPhaiTra = DateOnly.FromDateTime(DateTime.Today.AddDays(_opt.SoNgayMuonMacDinh))
         };
         await NapNguonDuLieuAsync(vm);

@@ -63,7 +63,7 @@ public partial class DoAnNhom11Context : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.HienTrangSach)
                 .HasMaxLength(50)
-                .HasDefaultValue("Mới");
+                .HasDefaultValue("Bình thường");
             entity.Property(e => e.MaDauSach)
                 .HasMaxLength(10)
                 .IsUnicode(false);

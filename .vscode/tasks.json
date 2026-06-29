@@ -8,6 +8,8 @@
       "args": [
         "build",
         "${workspaceFolder}/Nhom11.csproj",
+        "--configuration",
+        "Release",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],

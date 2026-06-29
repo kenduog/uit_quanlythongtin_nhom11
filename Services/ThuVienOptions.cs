@@ -9,7 +9,7 @@ public class ThuVienOptions
     public decimal PhatQuaHanMoiNgay { get; set; } = 5000;
 
     /// <summary>Tổng nợ vượt ngưỡng này thì thẻ độc giả tự động bị khóa.</summary>
-    public decimal NguongKhoaThe { get; set; } = 100000;
+    public decimal NguongKhoaThe { get; set; } = 50000;
 
     /// <summary>Số cuốn sách tối đa được mượn trong một phiếu.</summary>
     public int SoSachMuonToiDa { get; set; } = 5;

@@ -38,4 +38,18 @@
 </table>
 
 <a asp-action="Edit" asp-route-id="@Model.MaDocGia" class="btn btn-primary">Sửa</a>
+@{
+    bool duDieuKien = Model.TrangThai == "Bình thường" && Model.NgayHetHan >= homNay;
+}
+@if (duDieuKien)
+{
+    <a asp-controller="PhieuMuon" asp-action="Create" asp-route-maDocGia="@Model.MaDocGia"
+       class="btn btn-success"><i class="bi bi-clipboard-plus me-1"></i>Lập phiếu mượn</a>
+}
+else
+{
+    <button class="btn btn-success" disabled title="Độc giả không đủ điều kiện mượn (thẻ khóa hoặc hết hạn)">
+        <i class="bi bi-clipboard-plus me-1"></i>Lập phiếu mượn
+    </button>
+}
 <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
