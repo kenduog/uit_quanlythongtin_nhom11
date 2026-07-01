@@ -15,7 +15,7 @@ public class MaGenerator
         _db = db;
     }
 
-    /// <summary>Sinh mã đầu sách kế tiếp dạng DSxx (DS01, DS02, ...).</summary>
+    /// <summary>Sinh mã đầu sách kế tiếp dạng DSxxx (DS001, DS002, ...).</summary>
     public async Task<string> SinhMaDauSachAsync()
     {
         var maxSo = await _db.Dausaches
@@ -23,7 +23,7 @@ public class MaGenerator
             .Select(d => d.MaDauSach.Substring(2))
             .ToListAsync();
         int next = LaySoLonNhat(maxSo) + 1;
-        return $"DS{next:D2}";
+        return $"DS{next:D3}";
     }
 
     /// <summary>Sinh mã độc giả kế tiếp dạng DGxxx (DG001, DG002, ...).</summary>
@@ -54,11 +54,8 @@ public class MaGenerator
     /// </summary>
     public async Task<string> SinhMaCuonSachAsync(string maDauSach)
     {
-        // Phần số của đầu sách, ví dụ "DS01" -> "01".
-        string phanSoDauSach = new string(maDauSach.Where(char.IsDigit).ToArray());
-        if (string.IsNullOrEmpty(phanSoDauSach)) phanSoDauSach = "00";
-
-        string tienTo = $"CS{phanSoDauSach.PadLeft(2, '0')}_";
+        // Format: {MaDauSach}_CS{thứTự} → DS01_CS01, DS01_CS02, ...
+        string tienTo = $"{maDauSach}_CS";
         var dsSo = await _db.Cuonsaches
             .Where(c => c.MaCuonSach.StartsWith(tienTo))
             .Select(c => c.MaCuonSach.Substring(tienTo.Length))
